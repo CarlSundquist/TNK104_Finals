@@ -1,0 +1,96 @@
+
+%% Lagrangean Relaxation for Uncapacitated Facility Location Problem
+
+% Read data from file
+data = load('6_data.txt');
+I = data(1,1); % number of candidate facilities
+J = data(1,2); % number of customers
+coords_facilities = data(2:I+1, :); % coordinates of facilities
+coords_customers = data(I+2:I+J+1, :); % coordinates of customers
+fixed_costs = data(I+J+2:end, 1); % fixed costs of the facilities
+
+% Initializing parameters
+lambda = zeros(J, 1); % Lagrange multipliers
+k_max = 100; % Maximum iterations
+s = 1.9; % Step size constant
+z_star = 2213; % Upper bound (provided in the assignment)
+epsilon = 1e-6; % Tolerance for stopping criteria
+
+% Define a cost matrix based on distances (Euclidean)
+cij = zeros(I, J);
+for i = 1:I
+    for j = 1:J
+        cij(i, j) = norm(coords_facilities(i, :) - coords_customers(j, :));
+    end
+end
+
+%% Lagrangian Relaxation Subproblem
+function [x_opt, y_opt, h_lambda] = lagrangian_relaxation(I, J, fij, cij, lambda)
+    % Solve the Lagrangian relaxation subproblem
+    
+    % Initialize decision variables
+    x_opt = zeros(I, J);
+    y_opt = zeros(I, 1);
+    h_lambda = 0; % Dual value
+    
+    % Solve the subproblem for each facility
+    for i = 1:I
+        % Determine if facility i should be open
+        reduced_cost = fij(i) + sum(cij(i, :) + lambda');
+        if reduced_cost < 0
+            y_opt(i) = 1; % Open facility
+        else
+            y_opt(i) = 0; % Close facility
+        end
+        
+        % For each customer, determine the assignment to facility i
+        for j = 1:J
+            if y_opt(i) == 1 && cij(i, j) + lambda(j) < 0
+                x_opt(i, j) = 1;
+            else
+                x_opt(i, j) = 0;
+            end
+        end
+        
+        % Update the dual value
+        h_lambda = h_lambda + fij(i) * y_opt(i) + sum((cij(i, :) + lambda') .* x_opt(i, :));
+    end
+    
+    % Subtract the sum of lambda values
+    h_lambda = h_lambda - sum(lambda);
+end
+
+%% Subgradient Optimization
+k = 0; % Iteration counter
+while k < k_max
+    % Solve the relaxation subproblem
+    [x_opt, y_opt, h_lambda] = lagrangian_relaxation(I, J, fixed_costs, cij, lambda);
+    
+    % Compute subgradient
+    gamma = sum(x_opt, 1)' - 1; % Sum over i for each j
+    
+    % Compute step size
+    step_size = s * (z_star - h_lambda) / (norm(gamma)^2 + epsilon);
+    
+    % Update Lagrange multipliers
+    lambda = lambda + step_size * gamma;
+    
+    % Ensure non-negative lambda
+    lambda = max(0, lambda);
+    
+    % Check stopping criteria
+    if norm(gamma) < epsilon
+        break;
+    end
+    
+    % Increment iteration counter
+    k = k + 1;
+end
+
+disp('Optimal lambda values:');
+disp(lambda);
+disp('Optimal x values:');
+disp(x_opt);
+disp('Optimal y values:');
+disp(y_opt);
+disp(['Dual bound value h(λ): ', num2str(h_lambda)]);

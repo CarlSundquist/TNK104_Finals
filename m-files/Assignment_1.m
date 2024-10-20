@@ -1,8 +1,9 @@
-%% 
-% *A)*
+%%Project networks
+clear all; clc;
 
+%a)
 % Read the file
-filename = 'project_networks_data.txt';
+filename = '1_data.txt';
 
 fid = fopen(filename, 'r');
 num_arcs = fscanf(fid, '%d', 1);
@@ -44,9 +45,7 @@ while ~isempty(queue)
     end
 end
 
-%% 
-% *B)*
-
+%B)
 % Check if there is a cycle
 if length(ordering) ~= num_nodes
     error('The project network has a cycle, and it is impossible to complete the tasks.');
