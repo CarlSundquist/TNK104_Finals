@@ -1,4 +1,4 @@
-%% Assignment 2, Carl Sudquist (carsu621)
+%% Assignment 2, Carl Sudquist (carsu621), TNK104, 2024-10-21
 %Lot-sizing
 clear all; clc;
 % Read input data from file

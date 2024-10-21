@@ -1,4 +1,4 @@
-%% Assignment 1, Carl Sundquist (carsu621)
+%% Assignment 1, Carl Sundquist (carsu621), TNK104, 2024-10-21
 %%Project networks
 clear all; clc;
 

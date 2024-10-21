@@ -1,4 +1,4 @@
-%% Assignment 3, Carl Sundquist (carsu621)
+%% Assignment 3, Carl Sundquist (carsu621), TNK104, 2024-10-21
 %Cutting Plane Method for Binary Knapsack Problem with Cover Inequalities
 clear all; clc;
 
