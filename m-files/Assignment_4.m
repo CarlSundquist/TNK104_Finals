@@ -1,3 +1,4 @@
+%% Assignment 4, Carl Sundquist (carsu621)
 %Greedy algorithm for the generalized assignment problem (GAP)
 clear all; clc;
 % Input Data for the problem

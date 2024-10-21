@@ -1,3 +1,4 @@
+%% Assignment 1, Carl Sundquist (carsu621)
 %%Project networks
 clear all; clc;
 
